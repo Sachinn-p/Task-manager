@@ -16,6 +16,21 @@ const TASK_PRIORITY = {
   HIGH: 'high'
 };
 
+// Validation helper functions
+const validateStatus = (status) => {
+  if (status && !Object.values(TASK_STATUS).includes(status)) {
+    return `Invalid status. Must be one of: ${Object.values(TASK_STATUS).join(', ')}`;
+  }
+  return null;
+};
+
+const validatePriority = (priority) => {
+  if (priority && !Object.values(TASK_PRIORITY).includes(priority)) {
+    return `Invalid priority. Must be one of: ${Object.values(TASK_PRIORITY).join(', ')}`;
+  }
+  return null;
+};
+
 // Validation middleware
 const validateTask = (req, res, next) => {
   const { title, userId, status, priority } = req.body;
@@ -40,17 +55,15 @@ const validateTask = (req, res, next) => {
   }
 
   // Validate status if provided
-  if (status && !Object.values(TASK_STATUS).includes(status)) {
-    return res.status(400).json({ 
-      error: `Invalid status. Must be one of: ${Object.values(TASK_STATUS).join(', ')}` 
-    });
+  const statusError = validateStatus(status);
+  if (statusError) {
+    return res.status(400).json({ error: statusError });
   }
 
   // Validate priority if provided
-  if (priority && !Object.values(TASK_PRIORITY).includes(priority)) {
-    return res.status(400).json({ 
-      error: `Invalid priority. Must be one of: ${Object.values(TASK_PRIORITY).join(', ')}` 
-    });
+  const priorityError = validatePriority(priority);
+  if (priorityError) {
+    return res.status(400).json({ error: priorityError });
   }
 
   next();
@@ -130,18 +143,22 @@ router.put('/:id', (req, res) => {
   try {
     const { title, description, status, priority } = req.body;
     
+    // Check if task exists first
+    const existingTask = Task.findById(req.params.id);
+    if (!existingTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
     // Validate status if provided
-    if (status && !Object.values(TASK_STATUS).includes(status)) {
-      return res.status(400).json({ 
-        error: `Invalid status. Must be one of: ${Object.values(TASK_STATUS).join(', ')}` 
-      });
+    const statusError = validateStatus(status);
+    if (statusError) {
+      return res.status(400).json({ error: statusError });
     }
 
     // Validate priority if provided
-    if (priority && !Object.values(TASK_PRIORITY).includes(priority)) {
-      return res.status(400).json({ 
-        error: `Invalid priority. Must be one of: ${Object.values(TASK_PRIORITY).join(', ')}` 
-      });
+    const priorityError = validatePriority(priority);
+    if (priorityError) {
+      return res.status(400).json({ error: priorityError });
     }
 
     const updateData = {};
@@ -151,10 +168,6 @@ router.put('/:id', (req, res) => {
     if (priority) updateData.priority = priority;
 
     const task = Task.update(req.params.id, updateData);
-    
-    if (!task) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
 
     res.json({
       success: true,
