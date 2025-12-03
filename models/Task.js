@@ -27,21 +27,18 @@ class Task {
   }
 
   static findAll(filters = {}) {
-    let filteredTasks = tasks;
-
-    if (filters.userId) {
-      filteredTasks = filteredTasks.filter(task => task.userId === parseInt(filters.userId));
-    }
-
-    if (filters.status) {
-      filteredTasks = filteredTasks.filter(task => task.status === filters.status);
-    }
-
-    if (filters.priority) {
-      filteredTasks = filteredTasks.filter(task => task.priority === filters.priority);
-    }
-
-    return filteredTasks;
+    return tasks.filter(task => {
+      if (filters.userId && task.userId !== filters.userId) {
+        return false;
+      }
+      if (filters.status && task.status !== filters.status) {
+        return false;
+      }
+      if (filters.priority && task.priority !== filters.priority) {
+        return false;
+      }
+      return true;
+    });
   }
 
   static findById(id) {

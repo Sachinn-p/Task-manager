@@ -3,6 +3,19 @@ const router = express.Router();
 const Task = require('../models/Task');
 const User = require('../models/User');
 
+// Constants for validation
+const TASK_STATUS = {
+  PENDING: 'pending',
+  IN_PROGRESS: 'in-progress',
+  COMPLETED: 'completed'
+};
+
+const TASK_PRIORITY = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high'
+};
+
 // Validation middleware
 const validateTask = (req, res, next) => {
   const { title, userId } = req.body;
@@ -30,7 +43,7 @@ router.get('/', (req, res) => {
     const { userId, status, priority } = req.query;
     const filters = {};
 
-    if (userId) filters.userId = userId;
+    if (userId) filters.userId = parseInt(userId);
     if (status) filters.status = status;
     if (priority) filters.priority = priority;
 
@@ -73,8 +86,8 @@ router.post('/', validateTask, (req, res) => {
       title,
       description: description || '',
       userId,
-      status: status || 'pending',
-      priority: priority || 'medium'
+      status: status || TASK_STATUS.PENDING,
+      priority: priority || TASK_PRIORITY.MEDIUM
     });
     
     res.status(201).json({

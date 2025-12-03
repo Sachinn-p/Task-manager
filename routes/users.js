@@ -79,6 +79,12 @@ router.put('/:id', validateUser, (req, res) => {
   try {
     const { name, email, role } = req.body;
     
+    // Check if email already exists for a different user
+    const existingUser = User.findByEmail(email);
+    if (existingUser && existingUser.id !== parseInt(req.params.id)) {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    
     const user = User.update(req.params.id, { name, email, role });
     
     if (!user) {

@@ -9,6 +9,7 @@ class User {
     this.email = email;
     this.role = role;
     this.createdAt = new Date().toISOString();
+    this.updatedAt = new Date().toISOString();
   }
 
   static create(userData) {
@@ -29,7 +30,12 @@ class User {
     const index = users.findIndex(user => user.id === parseInt(id));
     if (index === -1) return null;
     
-    users[index] = { ...users[index], ...userData, id: parseInt(id) };
+    users[index] = { 
+      ...users[index], 
+      ...userData, 
+      id: parseInt(id),
+      updatedAt: new Date().toISOString()
+    };
     return users[index];
   }
 
