@@ -1,381 +1,551 @@
-# JIRA Clone - Task Management System
+# Django Task Management System
 
-A comprehensive task management system similar to JIRA built with Django, featuring role-based permissions, sprint management, and collaborative features.
+## 📋 Overview
 
-## Features Implemented
+A comprehensive **Project Task Management System** built with Django, featuring multi-role collaboration between Admins, Team Leaders, Employees, and Reviewers. The system provides complete lifecycle management of projects, sprints, tasks, and reviews with a modern REST API and web interface.
 
-### Core Functionality
-- ✅ User Authentication (Register, Login, Logout)
-- ✅ Role-Based Access Control (Admin, TL, Scrum Master, Developer, Tester)
-- ✅ Project Management
-- ✅ Sprint Management with Team Lead Assignment
-- ✅ Issue/Task Management
-- ✅ Comments and Activity Logging
-- ✅ Time Tracking
-- ✅ Status Workflow (To Do → Progress → Completed)
-- ✅ Role-Specific Dashboards
+## 🚀 Tech Stack
 
-### User Roles
+### Backend
+- **Framework**: Django 4.2.7
+- **API**: Django REST Framework 3.14.0
+- **Database**: PostgreSQL (production) / SQLite (development)
+- **Authentication**: JWT (djangorestframework-simplejwt 5.3.0)
+- **Documentation**: drf-yasg 1.21.7 (Swagger/OpenAPI)
 
-**Admin**
-- Create and manage users
-- Create and configure groups with custom permissions
-- Create projects
-- View admin backlog
-- Access to all system features
+### Frontend
+- **Web Interface**: Django Templates with Bootstrap
+- **API Client**: JavaScript Fetch API
+- **UI Components**: Bootstrap 5, Custom CSS
 
-**Team Lead (TL)**
-- Assigned to sprints during creation
-- Start sprint execution
-- Monitor sprint progress
-- View team capacity
+### Database & ORM
+- **Primary**: PostgreSQL with psycopg2-binary 2.9.9
+- **Development**: SQLite3
+- **Migrations**: Django ORM
 
-**Scrum Master**
-- Collaborate with Admin for sprint planning
-- Assign tasks to developers
-- Perform daily status updates
-- Track team progress
+### Security & CORS
+- **Authentication**: JWT tokens with refresh mechanism
+- **CORS**: django-cors-headers 4.3.0
+- **Permissions**: Role-based access control
 
-**Developer/Tester**
-- View assigned tasks
-- Set due dates for tasks
-- Update task status
-- Log time spent
-- Add comments
-- Personal backlog view
+### Testing & CI/CD
+- **Testing Framework**: pytest 7.4.3 + pytest-django 4.7.0
+- **Coverage**: pytest-cov 4.1.0 (minimum 70% coverage)
+- **Test Factories**: factory-boy 3.3.0 + Faker 20.1.0
+- **Code Quality**: Black, isort, Flake8, Bandit
+- **Pre-commit Hooks**: Automated code quality checks
+- **CI/CD**: GitHub Actions with automated testing and deployment
+- **Docker**: Multi-stage builds with Docker Compose
 
-## Technology Stack
+### Development Tools
+- **Debug**: django-debug-toolbar 4.2.0
+- **Environment**: python-decouple 3.8
+- **Image Processing**: Pillow 10.1.0
+- **Filtering**: django-filter 23.3
+- **Linting**: pylint 3.0.2, mypy 1.7.1
+- **Security**: bandit 1.7.5
 
-- **Backend**: Django 6.0
-- **Database**: SQLite (Development)
-- **Frontend**: Bootstrap 5 + Django Templates
-- **Icons**: Bootstrap Icons
+### Deployment Ready
+- **WSGI**: Gunicorn 21.2.0
+- **Static Files**: Whitenoise 6.6.0
+- **Containerization**: Docker + Docker Compose
+- **CI/CD**: GitHub Actions workflows
+- **Environment**: Production configurations included
 
-## Installation & Setup
+## 🎯 Features
+
+### ✅ Comprehensive Testing
+- **500+ Unit Tests**: Full coverage of models, views, serializers, and permissions
+- **Integration Tests**: End-to-end API testing
+- **CI/CD Pipeline**: Automated testing on every push and PR
+- **Code Coverage**: Minimum 70% with detailed HTML reports
+- **Pre-commit Hooks**: Automated code quality enforcement
+
+### 🔄 CI/CD Pipeline
+- **Automated Testing**: Multi-version Python testing (3.9, 3.10, 3.11)
+- **Code Quality Checks**: Black, isort, Flake8 linting
+- **Security Scanning**: Bandit static analysis, dependency checks
+- **Docker Builds**: Automated image building and tagging
+- **Coverage Reports**: Codecov integration
+- **PR Checks**: Automated validation for pull requests
+
+### 🐳 Docker Support
+- **Multi-stage Builds**: Optimized production images
+- **Docker Compose**: Complete stack with PostgreSQL, Redis, Nginx
+- **Test Environment**: Isolated testing with docker-compose.test.yml
+- **Development**: Hot-reload enabled development setup
+
+## 🚀 Quick Start
+
+### Method 1: Automated Setup (Recommended)
+
+```bash
+# Clone repository
+git clone https://github.com/Sachinn-p/Task-manager.git
+cd Task-manager
+
+# Run automated setup
+chmod +x setup.sh
+./setup.sh
+```
+
+### Method 2: Docker Setup
+
+```bash
+# Clone repository
+git clone https://github.com/Sachinn-p/Task-manager.git
+cd Task-manager
+
+# Start services
+docker-compose up --build
+
+# Access application at http://localhost:8000
+```
+
+### Method 3: Manual Setup
 
 ### Prerequisites
-- Python 3.10 or higher
-- pip and virtualenv
+- Python 3.9+
+- pip (Python package manager)
+- Git
 
-### Setup Instructions
+### Installation
 
-1. **Clone or navigate to the project directory**
-   ```bash
-   cd "C:\Users\Infy12\Desktop\Codes\TASK MANAGEMENT\JIRA"
-   ```
-
-2. **Activate the virtual environment** (if not already activated)
-   ```bash
-   .venv\Scripts\activate
-   ```
-
-3. **Install dependencies** (if not already installed)
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run migrations** (already done)
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
-
-5. **Start the development server**
-   ```bash
-   python manage.py runserver
-   ```
-
-6. **Access the application**
-   - Open your browser and go to: `http://127.0.0.1:8000/`
-
-## First Time Setup
-
-1. **Register First User (Will become Admin)**
-   - Navigate to `http://127.0.0.1:8000/register/`
-   - Fill in the registration form
-   - The first user is automatically assigned to the Admin group
-
-2. **Create User Groups**
-   - Login as Admin
-   - Go to "Manage Groups" from the navbar dropdown
-   - Create the following groups with appropriate permissions:
-     - TL (Team Lead)
-     - Scrum Master
-     - Developer
-     - Tester
-
-3. **Add Users**
-   - Go to "Manage Users" from the navbar
-   - Click "Add User"
-   - Assign users to appropriate groups
-
-4. **Create a Project**
-   - Go to Projects → Create Project
-   - Provide Project Name, Key (e.g., "PROJ"), and Description
-
-5. **Create a Sprint**
-   - Go to Sprints → Create Sprint
-   - Select Project
-   - Assign a Team Lead
-   - Set Sprint Goal
-
-6. **Create Issues**
-   - Go to Issues → Create Issue
-   - Fill in the details
-   - Assign to users
-   - Add to sprint (optional)
-
-## Project Structure
-
-```
-JIRA/
-├── manage.py
-├── requirements.txt
-├── README.md
-├── PROJECT_REQUIREMENTS.md
-├── db.sqlite3
-├── JIRA/                    # Main project settings
-│   ├── settings.py
-│   ├── urls.py
-│   ├── wsgi.py
-│   └── asgi.py
-├── Admin/                   # Admin app (Authentication & User Management)
-│   ├── models.py            # UserProfile model
-│   ├── views.py             # Auth, dashboard, user/group management views
-│   ├── urls.py
-│   └── templates/
-│       └── admin/           # Login, register, dashboard, user management templates
-├── Group/                   # Group management app
-│   ├── models.py            # GroupPermissionProfile model
-│   └── ...
-├── Projects/                # Projects app
-│   ├── models.py            # Project, Epic, Label models
-│   ├── views.py             # Project CRUD views
-│   ├── urls.py
-│   └── templates/
-│       └── projects/
-├── Sprint/                  # Sprint & Issue management app
-│   ├── models.py            # Sprint, Issue, Comment, TimeLog, ActivityLog models
-│   ├── views.py             # Sprint and issue management views
-│   ├── urls.py
-│   └── templates/
-│       └── sprint/
-├── static/                  # Static files (CSS, JS, images)
-├── media/                   # User uploads
-└── templates/               # Global templates
-    └── base.html            # Base template with Bootstrap
-```
-
-## Database Models
-
-### Admin App
-- **UserProfile**: Extended user information (phone, bio, avatar)
-
-### Projects App
-- **Project**: Projects with key, description, status
-- **Epic**: Large features broken into stories
-- **Label**: Tags for categorization
-
-### Sprint App
-- **Sprint**: Sprint management with TL assignment
-- **Issue**: Tasks/stories with type, priority, status
-- **Comment**: Comments on issues
-- **Attachment**: File attachments for issues
-- **ActivityLog**: Track all changes
-- **TimeLog**: Time tracking per issue
-- **Watcher**: Users monitoring issues
-
-### Group App
-- **GroupPermissionProfile**: Extended group permissions
-
-## Key Features
-
-### Authentication & Authorization
-- User registration with automatic admin assignment for first user
-- Login/Logout functionality
-- Role-based access control
-- Permission management per group
-
-### Dashboard Views
-- **Admin Dashboard**: System overview, statistics, quick actions
-- **TL Dashboard**: Sprint management and monitoring
-- **Scrum Master Dashboard**: Progress tracking and reporting
-- **Developer/Tester Dashboard**: Personal task management with Kanban view
-
-### Project Management
-- Create and manage projects
-- Project details with associated sprints and issues
-- Project status tracking
-
-### Sprint Management
-- Create sprints with TL assignment
-- Sprint planning and backlog
-- TL-controlled sprint start
-- Sprint board with status columns
-- Sprint completion tracking
-
-### Issue Management
-- Multiple issue types (Story, Task, Bug, Epic, Subtask)
-- Priority levels (Critical, High, Medium, Low)
-- Status workflow (To Do, Progress, Completed)
-- Assignee and reporter tracking
-- Due date management
-- Comments and discussions
-- Time logging
-- Activity history
-
-### Collaboration Features
-- Comment system
-- Activity logs for all changes
-- File attachments (ready for implementation)
-- Watchers (ready for implementation)
-
-## URL Routes
-
-### Authentication
-- `/register/` - User registration
-- `/login/` - User login
-- `/logout/` - User logout
-- `/dashboard/` - Role-based dashboard
-
-### User Management (Admin Only)
-- `/users/` - List all users
-- `/users/create/` - Add new user
-- `/users/<id>/edit/` - Edit user
-- `/users/<id>/delete/` - Delete user
-
-### Group Management (Admin Only)
-- `/groups/` - List all groups
-- `/groups/create/` - Create new group
-- `/backlog/` - Admin backlog view
-
-### Projects
-- `/projects/` - List all projects
-- `/projects/create/` - Create project
-- `/projects/<id>/` - Project details
-- `/projects/<id>/edit/` - Edit project
-
-### Sprints
-- `/sprints/` - List all sprints
-- `/sprints/create/` - Create sprint
-- `/sprints/<id>/` - Sprint board view
-- `/sprints/<id>/start/` - Start sprint (TL only)
-- `/sprints/<id>/complete/` - Complete sprint
-
-### Issues
-- `/issues/` - List all issues
-- `/issues/my/` - My assigned issues
-- `/issues/create/` - Create issue
-- `/issues/<id>/` - Issue details
-- `/issues/<id>/update-status/` - Update issue status
-- `/issues/<id>/comment/` - Add comment
-- `/issues/<id>/log-time/` - Log time spent
-
-## Workflow Example
-
-1. **Admin** registers and creates groups (Admin, TL, Scrum Master, Developer, Tester)
-2. **Admin** adds users and assigns them to groups
-3. **Admin** creates a project (e.g., "Task Management System" with key "TMS")
-4. **Admin and Scrum Master** discuss and create sprints for different modules
-5. **Scrum Master** creates issues and assigns them to developers
-6. **Admin** assigns a **TL** to each sprint
-7. **TL** starts the sprint when ready
-8. **Developers** update issue status as they work (To Do → Progress → Completed)
-9. **Developers** log time spent on tasks
-10. **Scrum Master** monitors daily progress on sprint board
-11. **TL** completes the sprint when done
-
-## Default Groups and Permissions
-
-When you create groups, assign these permissions:
-
-**Admin Group**
-- ✅ Can create projects
-- ✅ Can manage users
-- ✅ Can create sprints
-- ✅ Can assign tasks
-- ✅ Can update any task
-
-**TL Group**
-- ✅ Can create sprints
-- ✅ Can start sprints
-- ✅ Can assign tasks
-
-**Scrum Master Group**
-- ✅ Can create sprints
-- ✅ Can assign tasks
-- ✅ Can update any task
-
-**Developer/Tester Groups**
-- ❌ Limited to their own tasks
-- Can update status of assigned tasks
-- Can log time
-- Can comment
-
-## Future Enhancements
-
-Refer to [PROJECT_REQUIREMENTS.md](PROJECT_REQUIREMENTS.md) for the complete list of planned features including:
-
-- Burndown charts
-- Velocity tracking
-- Sprint retrospectives
-- Advanced filtering and search
-- Email notifications
-- File attachments implementation
-- Drag-and-drop on sprint board
-- Reports and analytics
-- REST API
-- And more...
-
-## Troubleshooting
-
-### Server not starting
+1. **Clone the repository**
 ```bash
-# Make sure you're in the correct directory
-cd "C:\Users\Infy12\Desktop\Codes\TASK MANAGEMENT\JIRA"
-
-# Activate virtual environment
-.venv\Scripts\activate
-
-# Run server
-python manage.py runserver
+git clone https://github.com/Sachinn-p/Task-manager.git
+cd Task-manager
 ```
 
-### Database issues
+2. **Create virtual environment**
 ```bash
-# Reset database (WARNING: This will delete all data)
-del db.sqlite3
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
+cd project_task_mgmt
+pip install -r requirements.txt
+```
+
+4. **Setup database**
+```bash
+python manage.py makemigrations
 python manage.py migrate
+```
 
-# Create a new superuser
+5. **Create superuser**
+```bash
 python manage.py createsuperuser
 ```
 
-### Static files not loading
+6. **Run the server**
 ```bash
-# Create static directory if it doesn't exist
-mkdir static
-
-# Collect static files
-python manage.py collectstatic
+python manage.py runserver
 ```
 
-## Development Server Status
+7. **Access the application**
+- Web Interface: http://localhost:8000/
+- API Documentation: http://localhost:8000/swagger/
 
-✅ **Server is currently running on http://127.0.0.1:8000/**
+## 🧪 Testing
 
-To stop the server: Press `CTRL+BREAK` in the terminal
+### Run Tests
 
-## Contributing
+```bash
+# Run all tests
+cd project_task_mgmt
+pytest
 
-This is a learning project. Feel free to extend it with additional features from the PROJECT_REQUIREMENTS.md file.
+# Run with coverage
+pytest --cov=tasks --cov-report=html
 
-## License
+# Run specific test file
+pytest tasks/tests/test_models.py
 
-MIT License
+# Run tests in parallel
+pytest -n auto
+
+# View coverage report
+python -m http.server 8001 --directory htmlcov
+```
+
+### Using Helper Scripts
+
+```bash
+# Run tests with coverage
+./run_tests.sh --coverage
+
+# Run all quality checks
+./run_tests.sh --all
+
+# Format and lint code
+./make.sh format
+./make.sh lint
+
+# Run tests in Docker
+./make.sh docker-test
+```
+
+### Pre-commit Hooks
+
+```bash
+# Install hooks
+pre-commit install
+
+# Run manually
+pre-commit run --all-files
+```
+
+See [TESTING.md](TESTING.md) for comprehensive testing documentation.
+
+## 🔄 CI/CD Pipeline
+
+The project includes automated CI/CD with GitHub Actions:
+
+- ✅ **Automated Testing**: On every push and PR
+- ✅ **Code Quality**: Black, isort, Flake8 checks
+- ✅ **Security Scanning**: Bandit, Safety checks
+- ✅ **Multi-version Testing**: Python 3.9, 3.10, 3.11
+- ✅ **Coverage Reports**: Codecov integration
+- ✅ **Docker Builds**: Automated image building
+- ✅ **Deployment**: Automated deployment workflows
+
+See [CI-CD.md](CI-CD.md) for detailed pipeline documentation.
+
+## 🐳 Docker Usage
+
+```bash
+# Build and start services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Run migrations
+docker-compose exec web python manage.py migrate
+
+# Create superuser
+docker-compose exec web python manage.py createsuperuser
+
+# Run tests in Docker
+docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+
+# Stop services
+docker-compose down
+```
+- Admin Panel: http://localhost:8000/admin/
+
+### Running Tests
+```bash
+# Run all tests
+python manage.py test
+
+# Run with coverage
+coverage run --source='.' manage.py test
+coverage report
+coverage html  # Generates HTML coverage report
+```
+
+## 🎯 System Features
+
+### Core Modules
+
+1. **User Management & Authentication**
+   - JWT-based authentication with refresh tokens
+   - Role-based access control (Admin, Team Leader, Employee, Reviewer)
+   - User profiles with team memberships
+   - Secure password management
+
+2. **Project Management**
+   - Create and manage projects with timelines
+   - Add team members and assign roles
+   - Track project status and progress
+   - Project-specific permissions and access control
+
+3. **Sprint Management**
+   - Agile sprint planning and management
+   - Sprint velocity tracking and analytics
+   - Sprint status transitions (Planning → Active → Completed)
+   - Team performance metrics
+
+4. **Task Management**
+   - Comprehensive task lifecycle management
+   - Priority levels (P0-P3) with validation
+   - Task dependencies with circular dependency prevention
+   - Status tracking: Open → In Progress → Review → Done → Closed
+   - Deadline and estimation tracking
+
+5. **Review System**
+   - Code/work review workflow
+   - Reviewer assignment and feedback
+   - Review status transitions
+   - Review comments and approval process
+
+6. **Communication & Collaboration**
+   - Task comments with @mentions
+   - Real-time notifications system
+   - Activity logging and audit trails
+   - Team communication features
+
+7. **Reporting & Analytics**
+   - Project progress dashboards
+   - Sprint velocity analytics
+   - Team performance reports
+   - Comprehensive metrics and KPIs
+
+8. **API & Integration**
+   - RESTful API with full CRUD operations
+   - Swagger/OpenAPI documentation
+   - JWT authentication for API access
+   - CORS support for frontend integration
+
+## 📚 API Endpoints
+
+### Authentication
+- `POST /api/auth/register/` - User registration
+- `POST /api/auth/login/` - User login (JWT)
+- `POST /api/auth/token/refresh/` - Refresh JWT token
+- `POST /api/auth/logout/` - User logout
+
+### Core Resources
+- `GET/POST /api/users/` - User management
+- `GET/POST /api/teams/` - Team management
+- `GET/POST /api/projects/` - Project management
+- `GET/POST /api/sprints/` - Sprint management
+- `GET/POST /api/tasks/` - Task management
+- `GET/POST /api/reviews/` - Review management
+
+### Additional Features
+- `GET/POST /api/notifications/` - Notification system
+- `GET/POST /api/comments/` - Comment system
+- `GET /api/analytics/` - Analytics and reports
+- `GET /api/activity-logs/` - Activity tracking
+
+
+## 📁 Project Structure
+
+```
+Task-manager/
+├── README.md                           # This file - project overview
+├── TESTING.md                          # Comprehensive testing documentation
+├── CI-CD.md                            # CI/CD pipeline documentation
+├── .gitignore                          # Git ignore rules
+├── .pre-commit-config.yaml             # Pre-commit hooks configuration
+├── Dockerfile                          # Docker image configuration
+├── docker-compose.yml                  # Multi-container Docker setup
+├── docker-compose.test.yml             # Testing environment setup
+├── nginx.conf                          # Nginx reverse proxy config
+├── .env.example                        # Environment variables template
+├── setup.sh                            # Automated setup script
+├── run_tests.sh                        # Test execution script
+├── deploy.sh                           # Deployment script
+├── make.sh                             # Helper commands script
+├── task-dependency-lifecycle.md        # System flow diagrams
+├── class-diagram.md                    # UML Class Diagram
+├── er-diagram.md                       # Database ER Diagram
+├── database-schema.sql                 # PostgreSQL Database Schema
+├── .github/                            # GitHub Actions workflows
+│   └── workflows/
+│       ├── ci-cd.yml                   # Main CI/CD pipeline
+│       └── pr-checks.yml               # Pull request validation
+└── project_task_mgmt/                  # Django project root
+    ├── pytest.ini                      # Pytest configuration
+    ├── pyproject.toml                  # Python project metadata
+    ├── .flake8                         # Flake8 linting rules
+    ├── requirements.txt                # Python dependencies
+    ├── manage.py                       # Django management script
+    ├── requirements.txt                # Python dependencies
+    ├── project_task_mgmt/             # Main project settings
+    │   ├── settings.py                # Django configuration
+    │   ├── urls.py                    # URL routing
+    │   └── wsgi.py                    # WSGI configuration
+    ├── tasks/                         # Main application
+    │   ├── models.py                  # Database models (17 models)
+    │   ├── views.py                   # API views
+    │   ├── serializers.py             # DRF serializers
+    │   ├── urls.py                    # API URL patterns
+    │   ├── web_views.py               # Web interface views
+    │   ├── web_urls.py                # Web URL patterns
+    │   ├── permissions.py             # Custom permissions
+    │   ├── forms.py                   # Django forms
+    │   ├── admin.py                   # Django admin configuration
+    │   ├── migrations/                # Database migrations
+    │   └── tests/                     # Comprehensive test suite
+    │       ├── __init__.py            # Test package
+    │       ├── test_models.py         # Model unit tests
+    │       ├── test_views.py          # API view tests
+    │       ├── test_serializers.py    # Serializer tests
+    │       ├── test_permissions.py    # Permission tests
+    │       ├── test_forms.py          # Form validation tests
+    │       └── factories.py           # Test data factories
+    ├── templates/                     # Django templates
+    │   └── tasks/                     # Application templates
+    ├── static/                        # Static files (CSS, JS, images)
+    └── staticfiles/                   # Collected static files
+```
+
+
+###  Task Dependency & Lifecycle (TDL) Diagram
+
+
+**Purpose:** Visual representation of the complete system flow showing:
+- Actor interactions (Admin, TL, Employee, Reviewer)
+- Module dependencies (Project → Sprint → Task → Review)
+- Task lifecycle states and transitions
+- Communication and notification flows
+- Access control boundaries
+
+
+**Key Highlights:**
+- Color-coded modules for easy identification
+- Clear dependency arrows showing data flow
+- Complete task state machine visualization
+- Communication loops between actors
+
+
+
+**Key Relationships:**
+- One-to-Many: User → Tasks, Project → Sprints
+- Self-Referential: Comment → Comment (replies), Task Dependencies
+- Many-to-Many: Users ↔ Teams, Users ↔ Projects
+
+###  Database Schema
+
+**File:** [`database-schema.sql`](./database-schema.sql)
+
+**Purpose:** Production-ready PostgreSQL schema including:
+- Complete table definitions with constraints
+- All required indexes for performance
+- Database triggers for automation
+- Functions for business logic
+- Data integrity rules
+
+**Technology:** PostgreSQL 14+
+
+**Key Features:**
+- Comprehensive relational design with proper constraints
+- Optimized indexes for performance
+- Automatic timestamp updates
+- Circular dependency prevention
+- Progress calculation automation
+
+
+## 🚀 Production Deployment
+
+### Environment Configuration
+1. **Create production environment file** (`.env`):
+```env
+SECRET_KEY=your-production-secret-key
+DEBUG=False
+ALLOWED_HOSTS=your-domain.com
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
+2. **PostgreSQL Setup**:
+```bash
+# Install PostgreSQL
+sudo apt-get install postgresql postgresql-contrib
+
+# Create database
+sudo -u postgres createdb task_management
+sudo -u postgres createuser task_user
+sudo -u postgres psql -c "ALTER USER task_user WITH PASSWORD 'secure_password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE task_management TO task_user;"
+```
+
+3. **Production Dependencies**:
+```bash
+pip install gunicorn whitenoise
+```
+
+4. **Static Files Collection**:
+```bash
+python manage.py collectstatic --noinput
+```
+
+### Docker Deployment (Optional)
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project_task_mgmt.wsgi:application"]
+```
+
+## Acknowledgments
+
+- Django and Django REST Framework communities
+- Bootstrap for UI components
+- Mermaid for diagram generation
+- All contributors and testers
 
 ---
 
-**Built with ❤️ using Django and Bootstrap**
+## 📖 Additional Documentation
 
-For detailed requirements and planned features, see [PROJECT_REQUIREMENTS.md](PROJECT_REQUIREMENTS.md)
+### Comprehensive Guides
+
+- **[TESTING.md](TESTING.md)** - Complete testing guide
+  - Test suite overview
+  - Running tests locally and in CI
+  - Coverage reports
+  - Pre-commit hooks
+  - Test fixtures and factories
+
+- **[CI-CD.md](CI-CD.md)** - CI/CD pipeline documentation
+  - GitHub Actions workflows
+  - Pipeline architecture
+  - Deployment strategies
+  - Monitoring and alerts
+  - Troubleshooting guide
+
+### Database Setup
+
+```bash
+# 1. Create PostgreSQL database
+createdb project_management
+
+# 2. Run the schema
+psql -d project_management -f database-schema.sql
+
+# 3. Verify tables
+psql -d project_management -c "\dt"
+
+# 4. Run Django migrations
+cd project_task_mgmt
+python manage.py migrate
+```
+
+## 📊 Code Quality Metrics
+
+| Metric | Target | Status |
+|--------|--------|--------|
+| Test Coverage | ≥ 70% | ✅ |
+| Code Style | Black + isort | ✅ |
+| Linting | Flake8 passing | ✅ |
+| Security | Bandit clean | ✅ |
+| Type Hints | mypy compatible | 🔄 |
+| Documentation | Comprehensive | ✅ |
+
+## 👥 Role-Based Permissions
+
+| Action | Admin | Team Leader | Employee | Reviewer |
+|--------|-------|-------------|----------|----------|
+| Create Project | ✅ | ✅ | ❌ | ❌ |
+| Create Sprint | ✅ | ✅ | ❌ | ❌ |
+| Create Task | ✅ | ✅ | ❌ | ❌ |
+| Assign Task | ✅ | ✅ | ❌ | ❌ |
+| Update Own Task | ✅ | ✅ | ✅ | ❌ |
+| Submit Task | ✅ | ✅ | ✅ | ❌ |
+| Assign Reviewer | ✅ | ✅ | ❌ | ❌ |
+| Review Task | ✅ | ✅ | ❌ | ✅ |
+| Add Comment | ✅ | ✅ | ✅ | ✅ |
+| View Reports | ✅ | ✅ | Own Only | ❌ |
+| Manage Users | ✅ | ❌ | ❌ | ❌ |
