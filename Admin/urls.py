@@ -17,6 +17,8 @@ urlpatterns = [
     # Group Management
     path('groups/', views.group_list_view, name='group_list'),
     path('groups/create/', views.group_create_view, name='group_create'),
+    path('groups/<int:group_id>/', views.group_detail_view, name='group_detail'),
+    path('groups/<int:group_id>/edit-members/', views.group_edit_members_view, name='group_edit_members'),
     
     # Admin Backlog
     path('backlog/', views.admin_backlog_view, name='admin_backlog'),

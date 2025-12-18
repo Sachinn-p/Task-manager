@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from .models import Project, Epic, Label
 from Sprint.models import Issue
 
+# Helper function to check if user is admin or scrum master
+def is_admin_or_scrum_master(user):
+    return user.groups.filter(name__in=['Admin', 'Scrum Master']).exists()
+
 @login_required
+@user_passes_test(is_admin_or_scrum_master)
 def project_list_view(request):
     projects = Project.objects.all()
     return render(request, 'projects/project_list.html', {'projects': projects})

@@ -1,14 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Sprints - JIRA Clone{% endblock %}
+{% block title %}Sprints - TASK MANAGER{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="bi bi-lightning"></i> Sprints</h2>
-        <a href="{% url 'sprint_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Create Sprint
-        </a>
+        {% for group in user.groups.all %}
+            {% if group.name == 'Admin' or group.name == 'Scrum Master' %}
+                {% ifchanged %}
+                    <a href="{% url 'sprint_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create Sprint
+                    </a>
+                {% endifchanged %}
+            {% endif %}
+        {% endfor %}
     </div>
 
     <!-- Active Sprints -->

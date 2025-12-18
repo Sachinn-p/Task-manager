@@ -28,9 +28,9 @@
                             <td><strong>{{ group.name }}</strong></td>
                             <td><span class="badge bg-primary">{{ group.user_count }} members</span></td>
                             <td>
-                                <button class="btn btn-sm btn-info" disabled>
-                                    <i class="bi bi-eye"></i> View
-                                </button>
+                                <a href="{% url 'group_detail' group.id %}" class="btn btn-sm btn-info">
+                                    <span class="material-icons md-18" style="vertical-align: middle;">visibility</span> View
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}

@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Members - {{ group.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .user-card {
+        transition: all 0.2s;
+        cursor: pointer;
+        border: 2px solid #dee2e6;
+    }
+    .user-card:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .user-card.selected {
+        border-color: var(--primary-color);
+        background-color: #e3f2fd;
+    }
+    .user-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    .search-box {
+        margin-bottom: 20px;
+    }
+    .filter-tabs {
+        margin-bottom: 20px;
+    }
+    .group-badge-container {
+        max-height: 50px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="mb-4">
+        <a href="{% url 'group_detail' group.id %}" class="btn btn-sm btn-outline-secondary mb-2">
+            <span class="material-icons md-18" style="vertical-align: middle;">arrow_back</span> Back to Group Details
+        </a>
+        <h2><span class="material-icons" style="vertical-align: middle;">manage_accounts</span> Manage Members - {{ group.name }}</h2>
+        <p class="text-muted">Select users to add to this group. Users can belong to multiple groups.</p>
+    </div>
+    
+    <form method="post" id="memberForm">
+        {% csrf_token %}
+        
+        <div class="card card-custom mb-4">
+            <div class="card-body">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <span class="material-icons md-18">search</span>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search users by username, name, or email...">
+                    </div>
+                </div>
+                
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <ul class="nav nav-pills" id="filterTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab">
+                                All Users
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="current-tab" data-bs-toggle="pill" data-bs-target="#current" type="button" role="tab">
+                                Current Members
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="other-tab" data-bs-toggle="pill" data-bs-target="#other" type="button" role="tab">
+                                From Other Groups
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAll()">
+                        <span class="material-icons md-18" style="vertical-align: middle;">check_box</span> Select All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAll()">
+                        <span class="material-icons md-18" style="vertical-align: middle;">check_box_outline_blank</span> Deselect All
+                    </button>
+                    <span class="ms-3 text-muted">
+                        <span id="selectedCount">{{ current_members|length }}</span> user(s) selected
+                    </span>
+                </div>
+                
+                <!-- Users List -->
+                <div class="row" id="usersList">
+                    {% for user in all_users %}
+                    <div class="col-md-6 col-lg-4 mb-3 user-item" 
+                         data-username="{{ user.username|lower }}" 
+                         data-name="{{ user.first_name|lower }} {{ user.last_name|lower }}"
+                         data-email="{{ user.email|lower }}"
+                         data-is-member="{% if user.id in current_members %}true{% else %}false{% endif %}"
+                         data-has-groups="{% if user.groups.all %}true{% else %}false{% endif %}">
+                        <div class="card user-card {% if user.id in current_members %}selected{% endif %}" 
+                             onclick="toggleUser(this, {{ user.id }})">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <input type="checkbox" 
+                                           class="user-checkbox me-3" 
+                                           name="users" 
+                                           value="{{ user.id }}"
+                                           {% if user.id in current_members %}checked{% endif %}
+                                           id="user_{{ user.id }}">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            <span class="material-icons md-18" style="vertical-align: middle;">person</span>
+                                            {{ user.username }}
+                                        </h6>
+                                        <p class="text-muted small mb-1">{{ user.first_name }} {{ user.last_name }}</p>
+                                        <p class="text-muted small mb-2">
+                                            <span class="material-icons md-18" style="vertical-align: middle;">email</span>
+                                            {{ user.email }}
+                                        </p>
+                                        <div class="group-badge-container">
+                                            {% if user.groups.all %}
+                                                {% for user_group in user.groups.all %}
+                                                    <span class="badge {% if user_group.id == group.id %}bg-primary{% else %}bg-secondary{% endif %} me-1 mb-1">
+                                                        {{ user_group.name }}
+                                                    </span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">No groups</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <span class="material-icons" style="vertical-align: middle;">info</span>
+                            No users available to add.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Submit Buttons -->
+        <div class="d-flex justify-content-between mb-4">
+            <a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">
+                <span class="material-icons md-18" style="vertical-align: middle;">cancel</span> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary btn-primary-custom">
+                <span class="material-icons md-18" style="vertical-align: middle;">save</span> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+<script>
+    function toggleUser(card, userId) {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        
+        if (checkbox.checked) {
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+        
+        updateSelectedCount();
+    }
+    
+    function selectAll() {
+        const visibleCards = document.querySelectorAll('.user-item:not([style*="display: none"]) .user-card');
+        visibleCards.forEach(card => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            checkbox.checked = true;
+            card.classList.add('selected');
+        });
+        updateSelectedCount();
+    }
+    
+    function deselectAll() {
+        const visibleCards = document.querySelectorAll('.user-item:not([style*="display: none"]) .user-card');
+        visibleCards.forEach(card => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            checkbox.checked = false;
+            card.classList.remove('selected');
+        });
+        updateSelectedCount();
+    }
+    
+    function updateSelectedCount() {
+        const count = document.querySelectorAll('input[name="users"]:checked').length;
+        document.getElementById('selectedCount').textContent = count;
+    }
+    
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const userItems = document.querySelectorAll('.user-item');
+        
+        userItems.forEach(item => {
+            const username = item.dataset.username;
+            const name = item.dataset.name;
+            const email = item.dataset.email;
+            
+            if (username.includes(searchTerm) || name.includes(searchTerm) || email.includes(searchTerm)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+    
+    // Filter functionality
+    document.querySelectorAll('#filterTabs button').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.id;
+            const userItems = document.querySelectorAll('.user-item');
+            
+            userItems.forEach(item => {
+                if (target === 'all-tab') {
+                    item.style.display = '';
+                } else if (target === 'current-tab') {
+                    item.style.display = item.dataset.isMember === 'true' ? '' : 'none';
+                } else if (target === 'other-tab') {
+                    item.style.display = (item.dataset.hasGroups === 'true' && item.dataset.isMember === 'false') ? '' : 'none';
+                }
+            });
+        });
+    });
+    
+    // Prevent card click from triggering when clicking checkbox directly
+    document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const card = this.closest('.user-card');
+            if (this.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+            updateSelectedCount();
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

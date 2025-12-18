@@ -40,9 +40,9 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="group" class="form-label">Assign to Group *</label>
-                            <select class="form-select" id="group" name="group" required>
-                                <option value="">Select a group</option>
+                            <label for="group" class="form-label">Assign to Group</label>
+                            <select class="form-select" id="group" name="group">
+                                <option value="">Select a group (optional)</option>
                                 {% for group in groups %}
                                     <option value="{{ group.id }}">{{ group.name }}</option>
                                 {% endfor %}

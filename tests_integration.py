@@ -1,5 +1,6 @@
+
 """
-Integration Tests for JIRA Clone Application
+Integration Tests for TASK MANAGER Application
 Tests the complete workflow and interaction between different modules
 """
 

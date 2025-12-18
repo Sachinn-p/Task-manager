@@ -177,10 +177,14 @@ def user_create_view(request):
             last_name=last_name
         )
         
-        # Assign group
-        if group_id:
-            group = Group.objects.get(id=group_id)
-            user.groups.add(group)
+        # Assign group (optional)
+        if group_id and group_id.strip():
+            try:
+                group = Group.objects.get(id=group_id)
+                user.groups.add(group)
+            except Group.DoesNotExist:
+                messages.warning(request, f'User {username} created but group assignment failed.')
+                return redirect('user_list')
         
         messages.success(request, f'User {username} created successfully!')
         return redirect('user_list')
@@ -268,6 +272,57 @@ def group_create_view(request):
         return redirect('group_list')
     
     return render(request, 'accounts/group_create.html')
+
+# Group Detail View
+@login_required
+@user_passes_test(is_admin)
+def group_detail_view(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    members = group.user_set.all().order_by('username')
+    
+    return render(request, 'accounts/group_detail.html', {
+        'group': group,
+        'members': members
+    })
+
+# Group Edit Members View
+@login_required
+@user_passes_test(is_admin)
+def group_edit_members_view(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    
+    if request.method == 'POST':
+        selected_users = request.POST.getlist('users')
+        
+        # Clear current members and add selected ones
+        # Note: We don't clear, we just sync to allow multiple group membership
+        current_member_ids = set(group.user_set.values_list('id', flat=True))
+        selected_user_ids = set(int(uid) for uid in selected_users if uid)
+        
+        # Remove users not selected
+        users_to_remove = current_member_ids - selected_user_ids
+        for user_id in users_to_remove:
+            user = User.objects.get(id=user_id)
+            group.user_set.remove(user)
+        
+        # Add newly selected users
+        users_to_add = selected_user_ids - current_member_ids
+        for user_id in users_to_add:
+            user = User.objects.get(id=user_id)
+            group.user_set.add(user)
+        
+        messages.success(request, f'Members of {group.name} updated successfully!')
+        return redirect('group_detail', group_id=group_id)
+    
+    # Get all users with their current groups
+    all_users = User.objects.all().prefetch_related('groups').order_by('username')
+    current_members = set(group.user_set.values_list('id', flat=True))
+    
+    return render(request, 'accounts/group_edit_members.html', {
+        'group': group,
+        'all_users': all_users,
+        'current_members': current_members
+    })
 
 # Admin Backlog View
 @login_required

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ group.name }} - Group Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{% url 'group_list' %}" class="btn btn-sm btn-outline-secondary mb-2">
+                <span class="material-icons md-18" style="vertical-align: middle;">arrow_back</span> Back to Groups
+            </a>
+            <h2><span class="material-icons" style="vertical-align: middle;">group</span> {{ group.name }}</h2>
+        </div>
+        <a href="{% url 'group_edit_members' group.id %}" class="btn btn-primary btn-primary-custom">
+            <span class="material-icons md-18" style="vertical-align: middle;">edit</span> Manage Members
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-custom">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <span class="material-icons md-18" style="vertical-align: middle;">people</span> 
+                        Group Members 
+                        <span class="badge bg-primary ms-2">{{ members.count }} member{{ members.count|pluralize }}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if members %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>All Groups</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in members %}
+                                    <tr>
+                                        <td>
+                                            <span class="material-icons md-18" style="vertical-align: middle;">person</span>
+                                            <strong>{{ member.username }}</strong>
+                                        </td>
+                                        <td>{{ member.first_name }} {{ member.last_name }}</td>
+                                        <td>{{ member.email }}</td>
+                                        <td>
+                                            {% for user_group in member.groups.all %}
+                                                <span class="badge {% if user_group.id == group.id %}bg-primary{% else %}bg-secondary{% endif %} me-1">
+                                                    {{ user_group.name }}
+                                                </span>
+                                            {% empty %}
+                                                <span class="text-muted">No groups</span>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <span class="material-icons" style="font-size: 64px; color: #ddd;">group_off</span>
+                            <p class="text-muted mt-3">No members in this group yet.</p>
+                            <a href="{% url 'group_edit_members' group.id %}" class="btn btn-primary btn-primary-custom">
+                                <span class="material-icons md-18" style="vertical-align: middle;">person_add</span> Add Members
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
